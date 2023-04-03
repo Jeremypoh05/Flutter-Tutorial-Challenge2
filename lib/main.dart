@@ -28,8 +28,14 @@ class _StoryPageState extends State<StoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(''),
+            fit: BoxFit.cover,
+          ),
+        ),
         //TODO: Step 1 - Find a background image, add the background image into the images directory, then add the background image to this Container.
-        padding: EdgeInsets.symmetric(vertical: 50.0, horizontal: 15.0),
+        padding: const EdgeInsets.symmetric(vertical: 50.0, horizontal: 15.0),
         constraints: BoxConstraints.expand(),
         child: SafeArea(
           child: Column(
@@ -40,7 +46,7 @@ class _StoryPageState extends State<StoryPage> {
                 child: Center(
                   child: Text(
                     //TODO: Step 10 - use the storyBrain to get the first story title and display it in this Text Widget.
-                    'Story text will go here',
+                    'Story text will go here!!!',
                     style: TextStyle(
                       fontSize: 25.0,
                     ),
