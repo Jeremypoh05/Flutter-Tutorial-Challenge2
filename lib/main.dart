@@ -1,6 +1,7 @@
+import 'package:adventuregame/story_brain.dart';
 import 'package:flutter/material.dart';
-
-//TODO: Step 15 - Run the app and see if you can see the screen update with the first story. Delete this TODO if it looks as you expected.
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() => runApp(AdventureGame());
 
@@ -16,7 +17,8 @@ class AdventureGame extends StatelessWidget {
   }
 }
 
-//TODO: Step 9 - Create a new storyBrain object from the StoryBrain class.
+//creates an instance of the StoryBrain class, which contains the logic for the interactive story.
+StoryBrain storyBrain = StoryBrain();
 
 class StoryPage extends StatefulWidget {
   @override
@@ -26,83 +28,173 @@ class StoryPage extends StatefulWidget {
 class _StoryPageState extends State<StoryPage> {
   @override
   Widget build(BuildContext context) {
+    int userChoice;
+
     return Scaffold(
       body: Container(
+        //add background image to the app
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(''),
+            image: AssetImage('assets/background.jpg'),
             fit: BoxFit.cover,
           ),
         ),
-        //TODO: Step 1 - Find a background image, add the background image into the images directory, then add the background image to this Container.
-        padding: const EdgeInsets.symmetric(vertical: 50.0, horizontal: 15.0),
-        constraints: BoxConstraints.expand(),
+        padding: const EdgeInsets.symmetric(vertical: 30.0, horizontal: 15.0),
+        constraints: const BoxConstraints.expand(),
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
                 flex: 12,
-                child: Center(
-                  child: Text(
-                    //TODO: Step 10 - use the storyBrain to get the first story title and display it in this Text Widget.
-                    'Story text will go here!!!',
-                    style: TextStyle(
-                      fontSize: 25.0,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        //to make the icon more higher than the "STORIES" text
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 18.0),
+                          //add the quoteLeft icon from FontAwesome library
+                          child: FaIcon(
+                            FontAwesomeIcons.quoteLeft,
+                            size: 24, // set the icon size
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          "STORIES",
+                          style: TextStyle(fontSize: 30),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        //to make the icon more higher than the "STORIES" text
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 18.0),
+                          //add the quoteRight icon from FontAwesome library
+                          child: FaIcon(
+                            FontAwesomeIcons.quoteRight,
+                            size: 24,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    //call the custom widget
+                    VerticalLine(
+                      width: 200,
+                      height: 3,
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 20),
+                      child: Text(storyBrain.getStory(),
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.abel(
+                            textStyle: const TextStyle(
+                              fontSize: 22.0,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: .5,
+                              height: 1.5,
+                            ),
+                          )),
+                    ),
+                    //call the custom widget
+                    VerticalLine(
+                      width: 200,
+                      height: 3,
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                  ],
                 ),
               ),
               Expanded(
                 flex: 2,
                 child: TextButton(
                   onPressed: () {
-                    // Choice 1 made by user
-                    //TODO: Step 18 - Call the nextStory() method from storyBrain and pass the number 1 as the choice made by the user.
+                    setState(() {
+                      storyBrain.nextStory(1);
+                      userChoice = 1;
+                      print("Button $userChoice is being clicked");
+                    });
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.resolveWith(
-                            (states) => Colors.red),
+                        (states) => Colors.red),
                     foregroundColor: MaterialStateProperty.resolveWith(
-                            (states) => Colors.white),
+                        (states) => Colors.white),
                     shape: MaterialStateProperty.resolveWith(
-                            (states) => BeveledRectangleBorder()),
+                        (states) => RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  10.0), // set the border radius
+                            )),
+                    overlayColor: MaterialStateProperty.resolveWith((states) =>
+                        Colors.white.withOpacity(0.1)), // set the overlay color
                   ),
-                  child: Text(
-                    //TODO: Step 13 - Use the storyBrain to get the text for choice 1.
-                    'Choice 1',
-                    style: TextStyle(
-                      fontSize: 20.0,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(
+                      storyBrain.getChoice1(),
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.bebasNeue(
+                        textStyle:
+                            const TextStyle(fontSize: 24.0, letterSpacing: 1.2),
+                      ),
                     ),
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20.0,
               ),
               Expanded(
                 flex: 2,
                 child: Visibility(
-                  //TODO: Step 26 - Use a Flutter Visibility Widget to wrap this TextButton.
-                  //TODO: Step 28 - Set the "visible" property of the Visibility Widget to equal the output from the buttonShouldBeVisible() method in the storyBrain.
+                  //show or hide the button based on the condition of the buttonShouldBeVisible() method
+                  visible: storyBrain.buttonShouldBeVisible(),
                   child: TextButton(
                     onPressed: () {
-                      // Choice 2 made by user
-                      //TODO: Step 19 - Call the nextStory() method from storyBrain and pass the number 2 as the choice made by the user.
+                      setState(() {
+                        storyBrain.nextStory(2);
+                        userChoice = 2;
+                         print("Button $userChoice is being clicked");
+                      });
                     },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.resolveWith(
-                              (states) => Colors.blue),
+                          (states) => Colors.blue),
                       foregroundColor: MaterialStateProperty.resolveWith(
-                              (states) => Colors.white),
+                          (states) => Colors.white),
                       shape: MaterialStateProperty.resolveWith(
-                              (states) => BeveledRectangleBorder()),
+                          (states) => RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    10.0), // set the border radius
+                              )),
+                      // set the overlay color
+                      overlayColor: MaterialStateProperty.resolveWith(
+                          (states) => Colors.white.withOpacity(0.1)),
                     ),
-                    child: Text(
-                      //TODO: Step 14 - Use the storyBrain to get the text for choice 2.
-                      'Choice 2',
-                      style: TextStyle(
-                        fontSize: 20.0,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Text(
+                        storyBrain.getChoice2(),
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.bebasNeue(
+                          textStyle: const TextStyle(
+                              fontSize: 24.0, letterSpacing: 1.2),
+                        ),
                       ),
                     ),
                   ),
@@ -116,6 +208,31 @@ class _StoryPageState extends State<StoryPage> {
   }
 }
 
-//TODO: Step 24 - Run the app and try to figure out what code you need to add to this file to make the story change when you press on the choice buttons.
+//refactor the code to new custom widget
+class VerticalLine extends StatelessWidget {
+  const VerticalLine({
+    super.key,
+    required this.width,
+    required this.height,
+    required this.color,
+    required this.borderRadius,
+  });
 
-//TODO: Step 29 - Run the app and test it against the Story Outline to make sure you've completed all the steps.
+// to make it more dynamic
+  final double width; //initialize width variable
+  final double height; //initialize height variable
+  final Color color; //initialize color variable
+  final BorderRadius borderRadius; //initialize borderRadius variable
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      width: width,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: borderRadius,
+      ),
+    );
+  }
+}
